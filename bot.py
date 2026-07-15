@@ -183,4 +183,6 @@ def cb(call):
         return
 
 print("✅ Bot ready!")
+bot.remove_webhook()
+time.sleep(1)
 bot.polling(none_stop=True)
