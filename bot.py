@@ -7,21 +7,18 @@ import time
 with open('bot_settings.json', 'r') as f:
     settings = json.load(f)
 
-BOT_TOKEN = settings['bot_token']
+BOT_TOKEN = '8886583166:AAEL0rssJ0H6BPaVd5oeaIadRhvdJ_rLQGo'
 ADMIN_ID = str(settings['admin_telegram_id'])
 API_URL = 'http://keycodm.atwebpages.com/bot_api.php'
 WALLETS = settings['usdt_wallets']
 PRICES = settings['prices']
 APK_URL = settings.get('apk_url', 'http://keycodm.atwebpages.com/app.apk')
 
-# KILL ALL OTHER INSTANCES
+# Kill old connections
 requests.get(f'https://api.telegram.org/bot{BOT_TOKEN}/deleteWebhook')
-time.sleep(2)
-requests.get(f'https://api.telegram.org/bot{BOT_TOKEN}/getUpdates?offset=-1')
 time.sleep(1)
 
 bot = telebot.TeleBot(BOT_TOKEN)
-
 print("🤖 Bot starting...")
 
 def call_api(action, **params):
@@ -36,7 +33,7 @@ def call_api(action, **params):
 def start(msg):
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     kb.add("FREE Trial", "Buy Plan", "Profile", "Support")
-    bot.send_message(msg.chat.id, "CODM ELITE SHOP", reply_markup=kb)
+    bot.send_message(msg.chat.id, "CODM ELITE SHOP\n@CODM_KEYSHOP_BOT", reply_markup=kb)
 
 @bot.message_handler(commands=['buy'])
 def buy(msg):
@@ -98,7 +95,7 @@ def cb(call):
             types.InlineKeyboardButton("TRC20", callback_data=f"net_{d}_TRC20")
         )
         kb.add(types.InlineKeyboardButton("GET KEY", callback_data=f"get_{d}"))
-        bot.edit_message_text(f"{d.upper()} - {price}$\n\nChoose network:", call.message.chat.id, call.message.message_id, reply_markup=kb)
+        bot.edit_message_text(f"{d.upper()} - {price}$\n\nNetwork:", call.message.chat.id, call.message.message_id, reply_markup=kb)
     elif d.startswith('net_'):
         _, plan, net = d.split('_')
         wallet = WALLETS.get(net, 'Not set')
@@ -123,5 +120,5 @@ def cb(call):
             bot.send_message(call.message.chat.id, f"TEST: {r['key']}")
             bot.answer_callback_query(call.id, "Sent!")
 
-print("✅ Ready!")
+print("Ready!")
 bot.polling(none_stop=True)
